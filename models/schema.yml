@@ -1,13 +1,13 @@
 version: 2
 
 sources:
-  - name: raw_circle
-    database: ninth-archway-475011-h6 
+  - name: raw
+ 
     schema: gz_raw_data
     tables:
-      - name: gz_raw_data.raw_gz_product
-      - name: gz_raw_data.raw_gz_sales
-      - name: gz_raw_data.raw_gz_ship
+      - name: raw_gz_product
+      - name: raw_gz_sales
+      - name: raw_gz_ship
         
 
   
