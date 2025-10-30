@@ -2,12 +2,57 @@ version: 2
 
 sources:
   - name: raw
- 
+
     schema: gz_raw_data
+    loader: bigquery
+    freshness:
+      warn_after: {count: 90, period: day}
     tables:
-      - name: raw_gz_product
-      - name: raw_gz_sales
-      - name: raw_gz_ship
+      - name: sales
+        identifier: raw_gz_sales
+        description: sales of Greenweez / we have one row per product_id found in each orders_is
+        columns:
+          - name: date_date
+            description: date of purchase
+          - name: orders_id
+            description: foreign key to ship
+          - name: pdt_id
+            description: foreign key to product
+          - name: revenue
+            description: the amout paid by the customer to purchase the product. revenue = quality * selling_price
+          - name: quantity
+            description: the quality of products purchased for a given order
+        tests: 
+          - unique: 
+              column_name: "(orders_id || '-' || pdt_id)"
+      - name: product
+        identifier: raw_gz_product
+        description: products of Greenweez
+        columns:
+          - name: products_id
+            description: Primary key
+          - name: purchase_price
+            description: the purchase price of the product
+            tests: 
+              - unique
+              - not_null
+
+      - name: ship
+        identifier: raw_gz_ship
+        description: shipping data for Greenweez orders
+        columns: 
+          - name: orders_id
+            description: Primary key
+            tests: 
+              - unique
+              - not_null
+          - name: shipping_fee
+            description: the price the customer pays for shipping
+          - name: log_cost
+            description: the cost of preparing the parcel in the distribution centre/warehouse
+          - name: ship_cost
+            description: shipping cost paid by Greenweez to the carrier/logistics provider
+        
         
 
   
