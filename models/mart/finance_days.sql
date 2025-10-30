@@ -1,5 +1,5 @@
 
-{{config(materialized="finance_days")}}
+{{config(materialized="finance_days.sql")}}
 with
     order_per_day as (
         select
