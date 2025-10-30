@@ -35,7 +35,6 @@ sources:
 
             description: the purchase price of the product
             tests: 
-              - unique
               - not_null
 
       - name: ship
