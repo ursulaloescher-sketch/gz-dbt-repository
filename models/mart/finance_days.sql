@@ -1,32 +1,35 @@
-WITH order_per_day AS (
-    select
-    date_date, 
-    COUNT(DISTINCT orders_id) AS nb_transactions,
-    ROUND(SUM(revenue), 0) AS revenue,
-    ROUND(SUM(margin), 0) AS margin,
-    ROUND(SUM(operational_margin), 0) AS operational_margin,
-    ROUND(SUM(purchase_cost), 0) AS purchase_cost,
-    ROUND(SUM(shipping_fee), 0) AS shipping_fee,
-    ROUND(SUM(logcost), 0) AS logcost,
-    ROUND(SUM(ship_cost), 0) AS ship_cost,
-    SUM(quantity) AS quantity
 
-FROM {{ref("int_orders_operational")}}
+{{config(materialized="finance_days")}}
+with
+    order_per_day as (
+        select
+            date_date,
+            count(distinct orders_id) as nb_transactions,
+            round(sum(revenue), 0) as revenue,
+            round(sum(margin), 0) as margin,
+            round(sum(operational_margin), 0) as operational_margin,
+            round(sum(purchase_cost), 0) as purchase_cost,
+            round(sum(shipping_fee), 0) as shipping_fee,
+            round(sum(logcost), 0) as logcost,
+            round(sum(ship_cost), 0) as ship_cost,
+            sum(quantity) as quantity
 
-GROUP BY date_date
-)
+        from {{ ref("int_orders_operational") }}
+
+        group by date_date
+    )
 
 select
     date_date,
     revenue,
-    margin, 
+    margin,
     operational_margin,
     purchase_cost,
-    shipping_fee, 
+    shipping_fee,
     logcost,
     ship_cost,
     quantity,
-    ROUND(revenue/NULLIF(nb_transactions, 0), 2) AS average_basket
-FROM order_per_day
+    round(revenue / nullif(nb_transactions, 0), 2) as average_basket
+from order_per_day
 
-ORDER BY date_date desc
+order by date_date desc
